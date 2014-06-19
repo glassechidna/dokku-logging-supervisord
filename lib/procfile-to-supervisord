@@ -12,6 +12,8 @@
 
 PROCFILE="$1"
 SCALEFILE="$2"
+NAMEFILE="$3"
+APPNAME=$(cat $NAMEFILE)
 
 if [ ! -f "$PROCFILE" ]; then
   echo "Procfile does not exist or is not readable: $PROCFILE" 1>&2
@@ -49,7 +51,7 @@ autostart=true
 autorestart=true
 stopsignal=TERM
 redirect_stderr=true
-stdout_logfile=/var/log/app/%(program_name)s.%(process_num)02d.log
+stdout_logfile=/var/log/app/${APPNAME}.%(program_name)s.%(process_num)02d.log
 EOF
 }
 

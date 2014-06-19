@@ -4,6 +4,7 @@ set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 APP="$1"
 IMAGE="dokku/$1"
 SCALE_FILE="$DOKKU_ROOT/$APP/SCALE"
+NAME_FILE="$DOKKU_ROOT/$APP/NAME"
 
 if [[ -n $DOKKU_API_VERSION ]]; then
   source "$PLUGIN_ENABLED_PATH/common/functions"
@@ -18,6 +19,9 @@ id=$(docker run -d $IMAGE test -f app/Procfile)
 if [ $(docker wait $id) -ne 0 ]; then
   exit 0
 fi
+
+echo "$APP" > $NAME_FILE
+copy_to_container "$NAME_FILE" /NAME
 
 copy_to_container "$PLUGIN_DIR/lib/procfile-to-supervisord" /usr/local/bin/procfile-to-supervisord
 if [ -f "$SCALE_FILE" ]; then
